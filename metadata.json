@@ -1,0 +1,6 @@
+{
+  "name": "Trợ lý vẽ hình học THCS",
+  "description": "Dựng hình học trực quan chuẩn sư phạm, tự động thiết kế đề bài, đáp án chi tiết và xuất mã GeoGebra từ mô tả tiếng Việt hoặc 28 hình mẫu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
