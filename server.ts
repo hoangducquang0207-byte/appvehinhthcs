@@ -16,15 +16,15 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Server API Route for advanced geometry description and image analysis
 app.post("/api/gemini/analyze", async (req, res) => {
   try {
-    const { text, image, mimeType } = req.body;
+    const { text, image, mimeType, apiKey } = req.body;
     
-    // Dynamically retrieve the latest API key to support runtime configuration updates
-    const current_api_key = process.env.GEMINI_API_KEY;
+    // Prioritize user-provided custom API key over system environment variables
+    const current_api_key = apiKey || process.env.GEMINI_API_KEY;
     if (!current_api_key) {
       return res.status(200).json({
         success: false,
         error: "GEMINI_API_KEY_MISSING",
-        message: "Chưa cấu hình GEMINI_API_KEY trên máy chủ. Thầy cô vui lòng cấu hình API Key trong mục Settings > Secrets.",
+        message: "Chưa cấu hình GEMINI_API_KEY trên máy chủ và chưa nhập API Key cá nhân. Thầy cô vui lòng nhấn nút 'API Key' ở góc trên để cấu hình sử dụng.",
       });
     }
 

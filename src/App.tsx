@@ -33,6 +33,7 @@ import {
   FileCheck,
   ImagePlus,
   Brain,
+  Key,
   MousePointer,
   Plus,
   Type,
@@ -222,6 +223,10 @@ export default function App() {
   const [guideModalOpen, setGuideModalOpen] = useState<boolean>(false);
   const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
   const [backupTextInput, setBackupTextInput] = useState<string>("");
+  const [geminiApiKey, setGeminiApiKey] = useState<string>(() => localStorage.getItem("gemini_api_key") || "");
+  const [apiKeyModalOpen, setApiKeyModalOpen] = useState<boolean>(false);
+  const [tempApiKey, setTempApiKey] = useState<string>("");
+  const [showApiKey, setShowApiKey] = useState<boolean>(false);
 
   // Undo & Fixed elements history engine
   const [history, setHistory] = useState<ShapeData[]>([]);
@@ -485,6 +490,7 @@ export default function App() {
           text: vnDescriptionInput,
           image: selectedImage,
           mimeType: selectedImageMime,
+          apiKey: geminiApiKey,
         }),
       });
 
@@ -1906,6 +1912,20 @@ export default function App() {
               id="themeToggleBtn"
             >
               {darkMode ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5" />}
+            </button>
+
+            {/* Gemini API Key Button */}
+            <button
+              onClick={() => {
+                setTempApiKey(geminiApiKey);
+                setShowApiKey(false);
+                setApiKeyModalOpen(true);
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800/60 dark:to-slate-800/80 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-slate-800 dark:hover:to-slate-700 text-blue-700 dark:text-blue-400 border border-blue-100/50 dark:border-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+              title="Cài đặt khóa API Key Gemini cá nhân"
+            >
+              <Key className="h-4 w-4 text-blue-500" />
+              <span>API Key Gemini</span>
             </button>
 
             {/* Quick guide button */}
@@ -4214,6 +4234,128 @@ export default function App() {
               >
                 Đã hiểu, bắt đầu sử dụng!
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GEMINI API KEY MODAL */}
+      {apiKeyModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-slate-200 dark:border-slate-800 shadow-2xl transition-all">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                🔑 Cấu hình Gemini API Key
+              </h3>
+              <button
+                onClick={() => setApiKeyModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 bg-slate-150 dark:bg-slate-850 rounded-lg cursor-pointer text-xs"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+              <p>
+                Để sử dụng tính năng <strong>Khai thác/Vẽ hình bằng AI✨</strong> trơn tru nhất mà không bị giới hạn lưu lượng, thầy cô hãy nhập khóa API Key Gemini cá nhân.
+              </p>
+              
+              <div className="p-3 bg-blue-50/50 dark:bg-blue-950/10 rounded-xl border border-blue-100/30 text-[11px] text-blue-800 dark:text-blue-300">
+                <span className="font-bold">Mẹo:</span> Thầy cô có thể tạo khóa API Key <strong>MIỄN PHÍ</strong> hoặc lấy các khóa sẵn có của mình tại trang web chính thức của bộ phận Google: {" "}
+                <a 
+                  href="https://aistudio.google.com/" 
+                  target="_blank" 
+                  referrerPolicy="no-referrer" 
+                  className="underline text-blue-600 dark:text-blue-400 font-extrabold hover:text-blue-700"
+                >
+                  Google AI Studio ↗
+                </a>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+                  Nhập khóa API Key của thầy cô:
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type={showApiKey ? "text" : "password"}
+                    value={tempApiKey || ""}
+                    onChange={(e) => setTempApiKey(e.target.value)}
+                    placeholder="AIzaSy..."
+                    className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-850/50 border border-slate-200 dark:border-slate-850 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-mono outline-none text-slate-850 dark:text-slate-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-2 px-2 py-1 text-[11px] font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-md cursor-pointer"
+                  >
+                    {showApiKey ? "Ẩn" : "Hiện"}
+                  </button>
+                </div>
+              </div>
+
+              {geminiApiKey && (
+                <div className="flex items-center gap-1.5 text-xs text-emerald-650 dark:text-emerald-400 font-medium bg-emerald-50/50 dark:bg-emerald-950/20 p-2.5 rounded-xl border border-emerald-100/30">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                  <span>Trình duyệt đang lưu một API Key hoạt động của thầy cô.</span>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-150 dark:border-slate-800 flex justify-between gap-2">
+              {geminiApiKey ? (
+                <button
+                  onClick={() => {
+                    setGeminiApiKey("");
+                    localStorage.removeItem("gemini_api_key");
+                    setNotice({
+                      show: true,
+                      msg: "Đã xóa API Key Gemini cá nhân. Hệ thống sẽ tự động dùng khóa mặc định của máy chủ.",
+                      type: "info"
+                    });
+                    setApiKeyModalOpen(false);
+                  }}
+                  className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-650 font-bold rounded-xl active:scale-95 transition text-xs cursor-pointer"
+                >
+                  Xóa khóa hiện tại
+                </button>
+              ) : (
+                <div />
+              )}
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setApiKeyModalOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl active:scale-95 transition text-xs cursor-pointer"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={() => {
+                    const trimmed = tempApiKey.trim();
+                    setGeminiApiKey(trimmed);
+                    if (trimmed) {
+                      localStorage.setItem("gemini_api_key", trimmed);
+                      setNotice({
+                        show: true,
+                        msg: "Lưu API Key Gemini cá nhân thành công! Thầy cô có thể sử dụng vẽ hình bằng AI ngay bây giờ.",
+                        type: "success"
+                      });
+                    } else {
+                      localStorage.removeItem("gemini_api_key");
+                      setNotice({
+                        show: true,
+                        msg: "Thiết lập API Key trống. Hệ thống sẽ sử dụng khóa mặc định.",
+                        type: "info"
+                      });
+                    }
+                    setApiKeyModalOpen(false);
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-95 shadow transition text-xs cursor-pointer"
+                >
+                  Lưu thiết lập
+                </button>
+              </div>
             </div>
           </div>
         </div>
