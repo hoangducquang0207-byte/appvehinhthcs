@@ -41,6 +41,9 @@ app.post("/api/gemini/analyze", async (req, res) => {
     const contents: any[] = [];
     
     let prompt = "Hãy phân tích hình vẽ hình học hoặc mô tả bài toán hình học sau đây và trả về định dạng JSON phù hợp.";
+    if (image) {
+      prompt += "\nẢnh này mô tả một bài tập hình học hoặc sơ đồ hình họa. Cực kỳ quan trọng: Bạn hãy tự đọc (OCR) toàn văn đề bài, chữ viết và ký hiệu từ ảnh, hiểu quan hệ giữa các điểm, và tự động tính toán tọa độ phù hợp.";
+    }
     if (text) {
       prompt += `\nMô tả hình học từ người dùng (chứa công thức toán):\n${text}`;
     }
@@ -127,7 +130,30 @@ Bạn BẮT BUỘC phải trả về kết quả là một đối tượng JSON 
       throw new Error("Không thể trích xuất dữ liệu hình học tự động từ mô hình AI.");
     }
 
-    const parsedJson = JSON.parse(reply.trim());
+    let cleanReply = reply.trim();
+    // Strip markdown code blocks if the response is wrapped
+    if (cleanReply.includes("```")) {
+      const matches = cleanReply.match(/```(?:json)?\n?([\s\S]*?)\n?```/);
+      if (matches && matches[1]) {
+        cleanReply = matches[1].trim();
+      }
+    }
+
+    // Capture everything between the first '{' and the last '}' to prune extra chatty prefixes/suffixes
+    const firstBrace = cleanReply.indexOf("{");
+    const lastBrace = cleanReply.lastIndexOf("}");
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      cleanReply = cleanReply.substring(firstBrace, lastBrace + 1);
+    }
+
+    let parsedJson: any;
+    try {
+      parsedJson = JSON.parse(cleanReply);
+    } catch (parseErr: any) {
+      console.error("Lỗi parse JSON gốc phản hồi từ Gemini:", reply);
+      throw new Error(`Độ dài hoặc định dạng chuỗi JSON phản hồi không hợp lệ: ${parseErr.message}`);
+    }
+
     res.json({
       success: true,
       data: parsedJson,
