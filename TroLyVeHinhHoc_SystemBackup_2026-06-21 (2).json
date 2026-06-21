@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "createdAt": "2026-06-21T14:53:02.343Z",
+  "savedFigures": [
+    {
+      "id": "triangle_median_1781885345102",
+      "name": "Tam giác có trung tuyến AM",
+      "description": "Vẽ tam giác ABC có M là trung điểm của BC. Vẽ trung tuyến AM.",
+      "data": {
+        "shapeType": "triangle_median",
+        "points": {
+          "A": {
+            "x": 1.5,
+            "y": 3.5
+          },
+          "B": {
+            "x": 0,
+            "y": 0
+          },
+          "C": {
+            "x": 4,
+            "y": 0
+          },
+          "M": {
+            "x": 2,
+            "y": 0
+          }
+        },
+        "segments": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ],
+          [
+            "C",
+            "A"
+          ],
+          [
+            "A",
+            "M"
+          ]
+        ],
+        "labels": {
+          "A": "top",
+          "B": "bottom-left",
+          "C": "bottom-right",
+          "M": "bottom"
+        }
+      },
+      "grade": "7",
+      "savedAt": "19/6/2026"
+    }
+  ],
+  "currentParsedData": {
+    "shapeType": "right_triangle_altitude",
+    "points": {
+      "A": {
+        "x": 0,
+        "y": 0
+      },
+      "B": {
+        "x": 0,
+        "y": 4
+      },
+      "C": {
+        "x": 3,
+        "y": 0
+      },
+      "H": {
+        "x": 1.92,
+        "y": 1.44
+      }
+    },
+    "segments": [
+      [
+        "A",
+        "B"
+      ],
+      [
+        "B",
+        "C"
+      ],
+      [
+        "C",
+        "A"
+      ],
+      [
+        "A",
+        "H"
+      ]
+    ],
+    "rightAngles": [
+      [
+        "B",
+        "A",
+        "C"
+      ],
+      [
+        "A",
+        "H",
+        "C"
+      ]
+    ],
+    "labels": {
+      "A": "bottom-left",
+      "B": "top",
+      "C": "bottom-right",
+      "H": "top-right"
+    }
+  },
+  "options": {
+    "showLabels": true,
+    "showLengths": false,
+    "showRightAngles": true,
+    "showAuxLines": true,
+    "showHiddenLines": true,
+    "showCoordinates": false,
+    "colorMode": "bw",
+    "enableAudio": true,
+    "audioVolume": 0.6
+  },
+  "darkMode": false
+}
