@@ -13,29 +13,30 @@ const PORT = 3000;
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Initialize GoogleGenAI server-side with proper user agent tracking
-const api_key = process.env.GEMINI_API_KEY;
-const ai = new GoogleGenAI({
-  apiKey: api_key || "",
-  httpOptions: {
-    headers: {
-      "User-Agent": "aistudio-build",
-    },
-  },
-});
-
 // Server API Route for advanced geometry description and image analysis
 app.post("/api/gemini/analyze", async (req, res) => {
   try {
     const { text, image, mimeType } = req.body;
     
-    if (!api_key) {
+    // Dynamically retrieve the latest API key to support runtime configuration updates
+    const current_api_key = process.env.GEMINI_API_KEY;
+    if (!current_api_key) {
       return res.status(200).json({
         success: false,
         error: "GEMINI_API_KEY_MISSING",
         message: "Chưa cấu hình GEMINI_API_KEY trên máy chủ. Thầy cô vui lòng cấu hình API Key trong mục Settings > Secrets.",
       });
     }
+
+    // Lazy initialize Gemini client with the fresh API key
+    const ai = new GoogleGenAI({
+      apiKey: current_api_key,
+      httpOptions: {
+        headers: {
+          "User-Agent": "aistudio-build",
+        },
+      },
+    });
 
     const contents: any[] = [];
     
