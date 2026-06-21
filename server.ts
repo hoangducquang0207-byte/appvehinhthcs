@@ -38,7 +38,7 @@ app.post("/api/gemini/analyze", async (req, res) => {
       },
     });
 
-    const contents: any[] = [];
+    const parts: any[] = [];
     
     let prompt = "Hãy phân tích hình vẽ hình học hoặc mô tả bài toán hình học sau đây và trả về định dạng JSON phù hợp.";
     if (image) {
@@ -76,6 +76,11 @@ C. Đối với Đường tròn (circles):
     + Bạn phải thêm phần tử vào mảng "circles" với dạng { "center": "tên_điểm_tâm", "point": "tên_điểm_trên_đường_tròn", "r": 0 }. Ví dụ: "circles": [{ "center": "O", "point": "A", "r": 0 }]. Điều này sẽ vẽ một đường tròn tâm O đi qua A. Do O là trung điểm AB nên đường tròn này cũng tự động đi qua B, tạo nên một đường tròn đường kính AB cực kỳ hoàn hảo.
     + Thêm đoạn thẳng đường kính vào mảng "segments": [["A", "B"]] để làm nổi bật đường kính.
 
+⚠️ LƯU Ý QUAN TRỌNG VỀ SỰ CHÍNH XÁC:
+- Mẫu JSON bên dưới CHỈ cung cấp định dạng kỹ thuật (schema). 
+- Tuyệt đối KHÔNG ĐƯỢC trả về tam giác vuông ABC mẫu nếu hình hoặc đề bài thực tế của người dùng nói về hình khác (ví dụ: hình bình hành ABCD, hình vuông, hình tròn, lăng trụ, hình chóp...).
+- Bạn phải trích xuất chuẩn xác thông tin từ ảnh tải lên (OCR) hoặc văn bản yêu cầu và tự thiết kế tọa độ các điểm thích hợp nhất cho đúng loại hình đó.
+
 Bạn BẮT BUỘC phải trả về kết quả là một đối tượng JSON thô đơn thuần, không chèn ký tự hay lời giải thích nào khác ngoài JSON sau đây:
 {
   "name": "Tên hình chi tiết (ví dụ: Hình lăng trụ đứng tam giác ABC.A'B'C')",
@@ -104,20 +109,18 @@ Bạn BẮT BUỘC phải trả về kết quả là một đối tượng JSON 
 }`;
 
     if (image) {
-      contents.push({
+      parts.push({
         inlineData: {
           mimeType: mimeType || "image/jpeg",
           data: image,
         },
       });
-      contents.push({ text: prompt });
-    } else {
-      contents.push({ text: prompt });
     }
+    parts.push({ text: prompt });
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: contents,
+      contents: { parts: parts },
       config: {
         systemInstruction: systemInstruction,
         responseMimeType: "application/json",
