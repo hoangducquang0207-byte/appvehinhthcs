@@ -129,6 +129,10 @@ Bạn BẮT BUỘC phải trả về kết quả là một đối tượng JSON 
     });
 
     const reply = response.text;
+    console.log("=== GEMINI RAW REPLY ===");
+    console.log(reply);
+    console.log("========================");
+
     if (!reply) {
       throw new Error("Không thể trích xuất dữ liệu hình học tự động từ mô hình AI.");
     }
@@ -148,6 +152,10 @@ Bạn BẮT BUỘC phải trả về kết quả là một đối tượng JSON 
     if (firstBrace !== -1 && lastBrace !== -1) {
       cleanReply = cleanReply.substring(firstBrace, lastBrace + 1);
     }
+
+    console.log("=== GEMINI CLEANED REPLY ===");
+    console.log(cleanReply);
+    console.log("============================");
 
     let parsedJson: any;
     try {
